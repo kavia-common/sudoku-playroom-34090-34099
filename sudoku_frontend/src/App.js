@@ -106,9 +106,11 @@ function isComplete(grid) {
  * PUBLIC_INTERFACE
  * Validate the current grid. Returns an object with conflict set and solved boolean.
  */
-function validateGrid(grid) {
-  const conflicts = findConflicts(grid);
-  const solved = isComplete(grid) && conflicts.size === 0;
+export function validateGrid(grid) {
+  // Defensive copy to avoid accidental mutation by callers (not strictly necessary, but safer)
+  const copy = cloneGrid(grid);
+  const conflicts = findConflicts(copy);
+  const solved = isComplete(copy) && conflicts.size === 0;
   return { conflicts, solved };
 }
 
@@ -223,7 +225,11 @@ function Controls({ onCheck, onReset }) {
   );
 }
 
-// PUBLIC_INTERFACE
+/**
+ * PUBLIC_INTERFACE
+ * Root Sudoku application component.
+ * Renders the game board, input controls, and handles validation and feedback banners.
+ */
 function App() {
   // Theme is fixed to light but we keep state to allow easy future toggle.
   const [theme] = useState('light');
